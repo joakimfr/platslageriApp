@@ -1,11 +1,13 @@
 // app/(tabs)/project/current-projects.tsx
 import React from 'react';
 import { View, Text } from 'react-native';
+import { ThemedView } from '@/components/ThemedView';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function CurrentProjectsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Visa nuvarande projekt</Text>
-    </View>
+    <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ThemedText>Visa nuvarande projekt</ThemedText>
+    </ThemedView>
   );
 }
