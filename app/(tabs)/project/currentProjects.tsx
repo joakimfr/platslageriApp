@@ -15,7 +15,7 @@ export default function CurrentProjectsScreen() {
   const handleProjectPress = (project) => {
     console.log('Navigerar till projekt:', project);
   console.log(`Sökväg: /tabs/project/${project.id}`);
-    router.push(`/tabs/project/${project.id}`);
+    router.push(`/project/${project.id}`);
   };
 
   return (
