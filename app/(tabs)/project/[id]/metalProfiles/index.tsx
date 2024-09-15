@@ -9,7 +9,7 @@ export default function ProfilesScreen() {
   const router = useRouter();
 
   const handleAddProfile = () => {
-    router.push(`/project/${id}/metalProfiles/addProfile`);
+    router.push(`/project/${id}/metalProfiles/allProfiles`);
   };
 
   return (
