@@ -4,6 +4,11 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
 
+type Project = {
+  id: string;
+  name: string;
+}
+
 export default function CurrentProjectsScreen() {
   const router = useRouter();
 
@@ -12,7 +17,7 @@ export default function CurrentProjectsScreen() {
     { id: '2', name: 'Projekt B' },
   ];
 
-  const handleProjectPress = (project) => {
+  const handleProjectPress = (project: Project) => {
     console.log('Navigerar till projekt:', project);
   console.log(`Sökväg: /tabs/project/${project.id}`);
     router.push(`/project/${project.id}`);

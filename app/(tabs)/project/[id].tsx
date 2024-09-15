@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function ProjectDetailsScreen() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
 
   const project = { id: id, name: `Projekt ${id}` };
 
@@ -13,6 +14,10 @@ export default function ProjectDetailsScreen() {
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Projekt: {project.name}</ThemedText>
       <ThemedText>ID: {project.id}</ThemedText>
+      <Button 
+        title="View Sheet Metal Profiles" 
+        onPress={() => router.push(`/project/${id}/metalProfiles`)} 
+      />
     </ThemedView>
   );
 }
