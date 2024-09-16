@@ -6,8 +6,8 @@ import {
   TextInput,
   Button,
   Alert,
+  View
 } from "react-native";
-import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -28,10 +28,9 @@ export default function HomeScreen() {
         />
       }
     >
-      <ThemedView style={styles.titleContainer}>
+      <View style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
+      </View>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Smygvinkel</ThemedText>
         <ThemedText>
