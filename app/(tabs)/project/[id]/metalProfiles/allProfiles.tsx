@@ -46,6 +46,10 @@ export default function AllProfilesScreen() {
     router.push(`/project/${id}/metalProfiles/${profile.name}`);
   };
 
+  const handleCreateCustomProfile = () => {
+    router.push(`/project/${id}/metalProfiles/createCustomProfile`);
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Plåtprofiler</ThemedText>
@@ -64,13 +68,10 @@ export default function AllProfilesScreen() {
         style={styles.profileList}
       />
 
-      <TextInput
-        value={newProfileName}
-        onChangeText={setNewProfileName}
-        placeholder="Ny plåtprofil"
-        style={styles.input}
+      <Button
+        title="Skapa egen plåtprofil"
+        onPress={handleCreateCustomProfile}
       />
-      <Button title="Lägg till" onPress={handleAddProfile} />
     </ThemedView>
   );
 }
