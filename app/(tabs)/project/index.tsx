@@ -1,25 +1,30 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function ProjectScreen() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Projekt</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/(tabs)/project/currentProjects")}
-      >
-        <Text style={styles.buttonText}>Dina projekt</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/(tabs)/project/createProject")}
-      >
-        <Text style={styles.buttonText}>Skapa projekt</Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <ThemedText type="title">Projekt</ThemedText>
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)/project/currentProjects")}
+        >
+          <Text style={styles.buttonText}>Dina projekt</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)/project/createProject")}
+        >
+          <Text style={styles.buttonText}>Skapa projekt</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -31,11 +36,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FF7F50",
   },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 20,
+  header: {
+    flex: 0.2,
+  },
+  buttonContainer: {
+    flex: 0.6,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
   },
   button: {
     backgroundColor: "#2C3E50",

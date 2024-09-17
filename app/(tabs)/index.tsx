@@ -6,7 +6,8 @@ import {
   TextInput,
   Button,
   Alert,
-  View
+  View,
+  Text
 } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -19,34 +20,45 @@ export default function HomeScreen() {
   };
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
+    <View style={styles.container}>
+      <Image
+        source={require("@/assets/images/appimage.jpg")}
+        style={styles.image}
+        resizeMode="cover" // För att få bilden att täcka området
+      />
       <View style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">PlåtKollen</ThemedText>
+        <Text style={styles.subTitle}>
+          Spara och Dela Plåtdetaljer för Alla Projekt
+        </Text>
       </View>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Smygvinkel</ThemedText>
-        <ThemedText>
-          Skriv in det mått som du fick från takets vinkel!
-        </ThemedText>
+      <View style={styles.stepContainer}>
+     
         <Button title="Skapa projekt" />
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
     alignItems: "center",
-    gap: 8,
+    backgroundColor: "#FF7F50",
+  },
+    image: {
+    width: "100%", // Bilden täcker hela bredden
+    height: 290, // Höjden är 290px
+    marginBottom: 20,
+  },
+  titleContainer: {
+    alignItems: "center",
+    gap: 16,
+  },
+  subTitle: {
+    fontSize: 16,
+    color: "#1E1E1E",
   },
   stepContainer: {
     gap: 8,

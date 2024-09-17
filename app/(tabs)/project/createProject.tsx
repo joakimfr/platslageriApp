@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
 
 export default function CreateProjectScreen() {
   const [projectName, setProjectName] = useState('');
@@ -10,7 +11,7 @@ export default function CreateProjectScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Skapa ett nytt projekt</Text>
+      <ThemedText type="title">Skapa ett nytt projekt</ThemedText>
       <TextInput
         value={projectName}
         onChangeText={setProjectName}
@@ -31,11 +32,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "#FF7F50",
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 16,
-  },
+  
   input: {
     height: 40,
     borderColor: 'gray',
