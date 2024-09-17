@@ -7,14 +7,18 @@ import {
   Button,
   Alert,
   View,
-  Text
+  Text,
+  TouchableOpacity
 } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Link } from "expo-router";
+import { Link } from "expo-router"
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   const handleCreateProject = () => {
     console.log("Skapa projekt-knappen trycktes!");
   };
@@ -33,8 +37,12 @@ export default function HomeScreen() {
         </Text>
       </View>
       <View style={styles.stepContainer}>
-     
-        <Button title="Skapa projekt" />
+      <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push("/(tabs)/project/")}
+        >
+          <Text style={styles.buttonText}>Gå till projekt</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -47,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FF7F50",
   },
-    image: {
+  image: {
     width: "100%", // Bilden täcker hela bredden
     height: 290, // Höjden är 290px
     marginBottom: 20,
@@ -62,13 +70,19 @@ const styles = StyleSheet.create({
   },
   stepContainer: {
     gap: 8,
-    marginBottom: 8,
+    marginTop: 120,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  button: {
+    backgroundColor: "#2C3E50",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: 195,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 18,
   },
 });
