@@ -19,8 +19,9 @@ export default function CurrentProjectsScreen() {
   const router = useRouter();
 
   const projects = [
-    { id: "1", name: "Projekt A" },
-    { id: "2", name: "Projekt B" },
+    { id: "1", name: "Sanda" },
+    { id: "2", name: "Hallonet" },
+    { id: "3", name: "Älmhult" },
   ];
 
   const handleProjectPress = (project: Project) => {
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderWidth: 1, // Lägg till en 2px bred border
-    borderColor: "#2C3E50", // Borderfärgen är #2C3E50
+    borderWidth: 1,
+    borderColor: "#2C3E50",
     marginBottom: 10, 
   },
   itemText: {
