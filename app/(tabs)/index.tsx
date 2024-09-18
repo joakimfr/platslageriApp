@@ -28,7 +28,7 @@ export default function HomeScreen() {
       <Image
         source={require("@/assets/images/appimage.jpg")}
         style={styles.image}
-        resizeMode="cover" // För att få bilden att täcka området
+        resizeMode="cover"
       />
       <View style={styles.titleContainer}>
         <ThemedText type="title">PlåtKollen</ThemedText>
