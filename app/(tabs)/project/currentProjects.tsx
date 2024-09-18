@@ -31,7 +31,9 @@ export default function CurrentProjectsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Nuvarande projekt</ThemedText>
+      <View style={styles.header}>
+        <ThemedText type="title">Dina projekt</ThemedText>
+      </View>
       <FlatList
         data={projects}
         keyExtractor={(item) => item.id}
@@ -40,7 +42,7 @@ export default function CurrentProjectsScreen() {
             <ThemedText style={styles.itemText}>{item.name}</ThemedText>
 
             <TouchableOpacity
-              style={styles.button}
+              style={styles.buttonSmall}
               onPress={() => handleProjectPress(item)}
             >
               <Text style={styles.buttonText}>Visa</Text>
@@ -48,12 +50,14 @@ export default function CurrentProjectsScreen() {
           </View>
         )}
       />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/(tabs)/project/createProject")}
-      >
-        <Text style={styles.buttonText}>Skapa nytt projekt</Text>
-      </TouchableOpacity>
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity
+          style={styles.buttonBig}
+          onPress={() => router.push("/(tabs)/project/createProject")}
+        >
+          <Text style={styles.buttonText}>Skapa nytt projekt</Text>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 }
@@ -63,25 +67,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#FF7F50",
+    padding: 16,
+  },
+  header: {
+    flex: 0.6,
+    justifyContent: "center",
+    alignItems: "center",
   },
   projectItem: {
-    padding: 15,
     flexDirection: "row",
     alignItems: "center",
+    padding: 16,
     justifyContent: "space-between",
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderWidth: 1, // Lägg till en 2px bred border
+    borderColor: "#2C3E50", // Borderfärgen är #2C3E50
+    marginBottom: 10, 
   },
   itemText: {
     alignItems: "center",
   },
-  button: {
+  buttonSmall: {
     backgroundColor: "#2C3E50",
     padding: 10,
     paddingLeft: 16,
     paddingRight: 16,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: 6,
     height: 40,
     alignItems: "center",
     justifyContent: "center",
@@ -89,5 +100,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: 18,
+  },
+  bottomContainer: {
+    alignItems: "center",
+  }, 
+  buttonBig: {
+    backgroundColor: "#2C3E50",
+    padding: 10,
+    width: 195,
+    borderRadius: 6,
+    marginBottom: 24,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
