@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
+import { CustomButton } from "@/components/CustomButton";
 
 export default function ProjectScreen() {
   const router = useRouter();
@@ -12,18 +13,16 @@ export default function ProjectScreen() {
         <ThemedText type="title">Projekt</ThemedText>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
+        <CustomButton
+          size="large"
+          title="Dina projekt"
           onPress={() => router.push("/(tabs)/project/currentProjects")}
-        >
-          <Text style={styles.buttonText}>Dina projekt</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
+        ></CustomButton>
+        <CustomButton
+          title="Skapa projekt"
+          size="large"
           onPress={() => router.push("/(tabs)/project/createProject")}
-        >
-          <Text style={styles.buttonText}>Skapa projekt</Text>
-        </TouchableOpacity>
+        ></CustomButton>
       </View>
     </View>
   );
@@ -44,18 +43,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 16,
-  },
-  button: {
-    backgroundColor: "#2C3E50",
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    width: 195,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
   },
 });

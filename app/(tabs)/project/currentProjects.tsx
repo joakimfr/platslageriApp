@@ -9,6 +9,7 @@ import {
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
+import { CustomButton } from "@/components/CustomButton";
 
 type Project = {
   id: string;
@@ -42,22 +43,21 @@ export default function CurrentProjectsScreen() {
           <View style={styles.projectItem}>
             <ThemedText style={styles.itemText}>{item.name}</ThemedText>
 
-            <TouchableOpacity
-              style={styles.buttonSmall}
+            <CustomButton
+              title="Visa"
+              size="small"
               onPress={() => handleProjectPress(item)}
-            >
-              <Text style={styles.buttonText}>Visa</Text>
-            </TouchableOpacity>
+            ></CustomButton>
           </View>
         )}
       />
       <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          style={styles.buttonBig}
+        <CustomButton
+          title="Skapa nytt projekt"
+          size="large"
           onPress={() => router.push("/(tabs)/project/createProject")}
         >
-          <Text style={styles.buttonText}>Skapa nytt projekt</Text>
-        </TouchableOpacity>
+        </CustomButton>
       </View>
     </ThemedView>
   );
@@ -83,36 +83,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderWidth: 1,
     borderColor: "#2C3E50",
-    marginBottom: 10, 
+    marginBottom: 10,
   },
   itemText: {
     alignItems: "center",
   },
-  buttonSmall: {
-    backgroundColor: "#2C3E50",
-    padding: 10,
-    paddingLeft: 16,
-    paddingRight: 16,
-    borderRadius: 6,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-  },
   bottomContainer: {
     alignItems: "center",
-  }, 
-  buttonBig: {
-    backgroundColor: "#2C3E50",
-    padding: 10,
-    width: 195,
-    borderRadius: 6,
-    marginBottom: 24,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
