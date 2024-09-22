@@ -17,12 +17,12 @@ export default function ProjectScreen() {
           size="large"
           title="Dina projekt"
           onPress={() => router.push("/(tabs)/project/currentProjects")}
-        ></CustomButton>
+        />
         <CustomButton
           title="Skapa projekt"
           size="large"
           onPress={() => router.push("/(tabs)/project/createProject")}
-        ></CustomButton>
+        />
       </View>
     </View>
   );
