@@ -1,15 +1,11 @@
-import React from "react";
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, FlatList, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
 import { CustomButton } from "@/components/CustomButton";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { app } from "@/firebase/firebaseConfig";
 
 type Project = {
   id: string;
@@ -18,12 +14,22 @@ type Project = {
 
 export default function CurrentProjectsScreen() {
   const router = useRouter();
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  const projects = [
-    { id: "1", name: "Sanda" },
-    { id: "2", name: "Hallonet" },
-    { id: "3", name: "Älmhult" },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const db = getFirestore(app);
+      const projectsCollection = collection(db, "projects");
+      const projectSnapshot = await getDocs(projectsCollection);
+      const projectList = projectSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+      }));
+      setProjects(projectList);
+    };
+
+    fetchProjects().catch(console.error);
+  }, []);
 
   const handleProjectPress = (project: Project) => {
     console.log("Navigerar till projekt:", project);
@@ -47,7 +53,7 @@ export default function CurrentProjectsScreen() {
               title="Visa"
               size="small"
               onPress={() => handleProjectPress(item)}
-            ></CustomButton>
+            />
           </View>
         )}
       />
@@ -56,8 +62,7 @@ export default function CurrentProjectsScreen() {
           title="Skapa nytt projekt"
           size="large"
           onPress={() => router.push("/(tabs)/project/createProject")}
-        >
-        </CustomButton>
+        />
       </View>
     </ThemedView>
   );
