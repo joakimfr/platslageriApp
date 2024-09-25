@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
-  TextInput,
   Button,
   FlatList,
   StyleSheet,
@@ -11,6 +9,8 @@ import {
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { db } from "@/firebase/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
 type Profile = {
   id: string;
@@ -21,29 +21,27 @@ export default function AllProfilesScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
-  const [profiles, setProfiles] = useState<Profile[]>([
-    { id: "1", name: "Fotplåt" },
-    { id: "2", name: "Överbleck" },
-    { id: "3", name: "Fönsterbleck" },
-  ]);
-
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [newProfileName, setNewProfileName] = useState("");
 
-  const handleAddProfile = () => {
-    const newProfile: Profile = {
-      id: (profiles.length + 1).toString(),
-      name: newProfileName,
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      const profilesCollection = collection(db, "metalProfiles");
+      const profilesSnapshot = await getDocs(profilesCollection);
+      const profilesList = profilesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+      }));
+      setProfiles(profilesList);
     };
 
-    setProfiles([...profiles, newProfile]);
-    setNewProfileName("");
-    console.log(`Adding profile '${newProfileName}' to project ${id}`);
-  };
+    fetchProfiles();
+  }, []);
 
   const handleProfilePress = (profile: Profile) => {
     console.log("Navigerar till projekt:", profile);
     console.log(`/project/${id}/metalProfiles/${profile.id}`);
-    router.push(`/project/${id}/metalProfiles/${profile.name}`);
+    router.push(`/project/${id}/metalProfiles/${profile.id}`);
   };
 
   const handleCreateCustomProfile = () => {
