@@ -1,20 +1,55 @@
-import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { app } from "@/firebase/firebaseConfig";
 import { CustomButton } from "@/components/CustomButton";
 
 export default function ProjectDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
-  const project = { id: id, name: `Projekt ${id}` };
+  const [projectName, setProjectName] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      const db = getFirestore(app);
+
+      const projectRef = doc(db, "projects", id as string);
+
+      const projectSnap = await getDoc(projectRef);
+
+      if (projectSnap.exists()) {
+        const projectData = projectSnap.data();
+        setProjectName(projectData.name);
+      } else {
+        console.log("Projektet existerar inte.");
+      }
+
+      setLoading(false);
+    };
+
+    fetchProject().catch(console.error);
+  }, [id]);
+
+ 
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>Laddar projektdata...</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText style={styles.title}>{project.name}</ThemedText>
+        <ThemedText style={styles.title}>
+          {projectName ? projectName : "Projektet har inget namn"}
+        </ThemedText>
       </View>
       <CustomButton
         size="large"
