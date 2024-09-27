@@ -3,6 +3,7 @@ import { View, TextInput, Button, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { db } from "@/firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
+import { CustomButton } from "@/components/CustomButton";
 
 export default function CreateProjectScreen() {
   const [projectName, setProjectName] = useState("");
@@ -31,7 +32,7 @@ export default function CreateProjectScreen() {
         placeholder="Projektnamn"
         style={styles.input}
       />
-      <Button title="Skapa" onPress={handleCreateProject} />
+      <CustomButton title="Skapa" size="large" onPress={handleCreateProject} />
     </View>
   );
 }

@@ -3,7 +3,14 @@ import { View, FlatList, Button, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { CustomButton } from "@/components/CustomButton";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 
 type Profile = {
@@ -16,13 +23,23 @@ export default function ProfilesScreen() {
   const router = useRouter();
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [projectName, setProjectName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Hämta profiler från Firestore
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchProjectData = async () => {
       try {
         const db = getFirestore(app);
+
+        const projectDoc = doc(db, "projects", id as string);
+        const projectSnapshot = await getDoc(projectDoc);
+
+        if (projectSnapshot.exists()) {
+          setProjectName(projectSnapshot.data()?.name || "Unnamed Project");
+        } else {
+          console.error("No project found with that ID.");
+        }
+
         const profilesCollection = collection(
           db,
           `projects/${id}/metalProfiles`
@@ -34,13 +51,13 @@ export default function ProfilesScreen() {
         })) as Profile[];
         setProfiles(profilesList);
       } catch (error) {
-        console.error("Error fetching profiles: ", error);
+        console.error("Error fetching profiles or project: ", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfiles();
+    fetchProjectData();
   }, [id]);
 
   const handleAddProfile = () => {
@@ -58,8 +75,7 @@ export default function ProfilesScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Plåtprofiler som används</ThemedText>
-      <ThemedText>Projekt ID: {id}</ThemedText>
-
+      <ThemedText>Projekt: {projectName}</ThemedText>
       <FlatList
         data={profiles}
         keyExtractor={(item) => item.id}
@@ -70,17 +86,21 @@ export default function ProfilesScreen() {
         )}
       />
 
-      <Button title="Lägg till fler" onPress={handleAddProfile} />
+      <CustomButton
+        title="Lägg till fler"
+        size="large"
+        onPress={handleAddProfile}
+      />
     </ThemedView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#FF7F50",
   },
   title: {
     fontSize: 24,

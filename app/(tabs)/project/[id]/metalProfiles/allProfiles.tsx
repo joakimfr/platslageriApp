@@ -11,6 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { db } from "@/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
+import { CustomButton } from "@/components/CustomButton";
 
 type Profile = {
   id: string;
@@ -66,8 +67,9 @@ export default function AllProfilesScreen() {
         style={styles.profileList}
       />
 
-      <Button
+      <CustomButton
         title="Skapa egen plåtprofil"
+        size="large"
         onPress={handleCreateCustomProfile}
       />
     </ThemedView>
@@ -80,6 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#FF7F50",
   },
   title: {
     fontSize: 24,

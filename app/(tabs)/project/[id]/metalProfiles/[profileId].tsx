@@ -5,6 +5,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
+import { CustomButton } from "@/components/CustomButton";
 
 export default function ProfileDetailsScreen() {
   const { id, profileId } = useLocalSearchParams();
@@ -12,7 +13,9 @@ export default function ProfileDetailsScreen() {
 
   const [length, setLength] = useState("");
   const [depth, setDepth] = useState("");
+  const [gables, setGables] = useState("");
   const [profileName, setProfileName] = useState("");
+  const [amount, setAmount] = useState("")
 
   useEffect(() => {
     const fetchProfileName = async () => {
@@ -39,6 +42,8 @@ export default function ProfileDetailsScreen() {
         name: profileName,
         length: length,
         depth: depth,
+        gables: gables,
+        amount: amount,
       },
       { merge: true }
     );
@@ -67,7 +72,21 @@ export default function ProfileDetailsScreen() {
         keyboardType="numeric"
         style={styles.input}
       />
-      <Button title="Spara" onPress={handleSave} />
+      <TextInput
+        value={gables}
+        onChangeText={setGables}
+        placeholder="Gavlar"
+        keyboardType="numeric"
+        style={styles.input}
+      />
+      <TextInput
+        value={amount}
+        onChangeText={setAmount}
+        placeholder="Antal"
+        keyboardType="numeric"
+        style={styles.input}
+      />
+      <CustomButton title="Spara" size="large" onPress={handleSave} />
     </ThemedView>
   );
 }
@@ -78,6 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#FF7F50",
   },
   title: {
     fontSize: 24,
