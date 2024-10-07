@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Button, StyleSheet } from "react-native";
+import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -31,6 +31,7 @@ export default function ProfilesScreen() {
       try {
         const db = getFirestore(app);
 
+        // Hämta projektets namn
         const projectDoc = doc(db, "projects", id as string);
         const projectSnapshot = await getDoc(projectDoc);
 
@@ -64,6 +65,11 @@ export default function ProfilesScreen() {
     router.push(`/project/${id}/metalProfiles/allProfiles`);
   };
 
+  const handleProfilePress = (profile: Profile) => {
+    console.log("Selected profile:", profile);
+    router.push(`/project/${id}/metalProfiles/addedProfileInfo`);
+  };
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
@@ -80,9 +86,12 @@ export default function ProfilesScreen() {
         data={profiles}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.profileItem}>
+          <TouchableOpacity
+            onPress={() => handleProfilePress(item)}
+            style={styles.profileItem}
+          >
             <ThemedText>{item.name}</ThemedText>
-          </View>
+          </TouchableOpacity>
         )}
       />
 
