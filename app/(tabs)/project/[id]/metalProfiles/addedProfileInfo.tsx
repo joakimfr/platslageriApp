@@ -11,6 +11,8 @@ type Profile = {
   name: string;
   length: string;
   depth: string;
+  amount: string;
+  gables: string;
 };
 
 export default function AddedProfileInfoScreen() {
@@ -18,6 +20,7 @@ export default function AddedProfileInfoScreen() {
 
   const [profileData, setProfileData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  console.log(profileData)
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -56,8 +59,10 @@ export default function AddedProfileInfoScreen() {
       {profileData ? (
         <>
           <ThemedText style={styles.title}>{profileData.name}</ThemedText>
-          <ThemedText>Längd: {profileData.length}</ThemedText>
-          <ThemedText>Djup: {profileData.depth}</ThemedText>
+          <ThemedText>Längd: {profileData.length} mm</ThemedText>
+          <ThemedText>Djup: {profileData.depth} mm</ThemedText>
+          <ThemedText>Gavlar: {profileData.gables} mm</ThemedText>
+          <ThemedText>Antal: {profileData.amount} st</ThemedText>
         </>
       ) : (
         <ThemedText>Ingen profil hittades</ThemedText>

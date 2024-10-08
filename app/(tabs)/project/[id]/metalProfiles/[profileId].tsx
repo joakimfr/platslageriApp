@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 import { CustomButton } from "@/components/CustomButton";
 
@@ -15,7 +15,7 @@ export default function ProfileDetailsScreen() {
   const [depth, setDepth] = useState("");
   const [gables, setGables] = useState("");
   const [profileName, setProfileName] = useState("");
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     const fetchProfileName = async () => {
@@ -34,24 +34,25 @@ export default function ProfileDetailsScreen() {
   const handleSave = async () => {
     const db = getFirestore(app);
 
-    const profileRef = doc(db, `projects/${id}/metalProfiles/${profileId}`);
-
-    await setDoc(
-      profileRef,
-      {
+    try {
+  
+      const profileRef = await addDoc(collection(db, `projects/${id}/metalProfiles`), {
+        templateId: profileId,
         name: profileName,
         length: length,
         depth: depth,
         gables: gables,
         amount: amount,
-      },
-      { merge: true }
-    );
+      });
 
-    console.log(
-      `Saving profile details for profile ${profileId} in project ${id}: Name=${profileName}, Length=${length}, Depth=${depth}`
-    );
-    router.back();
+      console.log(
+        `Saved new profile instance in project ${id}: Name=${profileName}, Length=${length}, Depth=${depth}, Gables=${gables}, Amount=${amount}, with new ID ${profileRef.id}`
+      );
+      
+      router.back();
+    } catch (error) {
+      console.error("Error saving profile to project: ", error);
+    }
   };
 
   return (
