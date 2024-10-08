@@ -25,7 +25,7 @@ export default function ProfilesScreen() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [projectName, setProjectName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
+console.log(profiles)
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
@@ -67,7 +67,7 @@ export default function ProfilesScreen() {
 
   const handleProfilePress = (profile: Profile) => {
     console.log("Selected profile:", profile);
-    router.push(`/project/${id}/metalProfiles/addedProfileInfo`);
+     router.push(`/project/${id}/metalProfiles/addedProfileInfo?profileId=${profile.id}`);
   };
 
   if (loading) {

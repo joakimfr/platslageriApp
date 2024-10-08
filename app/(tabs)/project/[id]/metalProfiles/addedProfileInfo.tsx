@@ -15,10 +15,7 @@ type Profile = {
 
 export default function AddedProfileInfoScreen() {
   const { id, profileId } = useLocalSearchParams();
-  useEffect(() => {
-    console.log("Project ID:", id);
-    console.log("Profile ID:", profileId);
-  }, [id, profileId]);
+
   const [profileData, setProfileData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
