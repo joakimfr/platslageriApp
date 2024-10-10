@@ -3,11 +3,32 @@ import { View, TextInput, Button, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+} from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 import { CustomButton } from "@/components/CustomButton";
 
+type Fields = {
+  length?: boolean;
+  depth?: boolean;
+  gables?: boolean;
+  amount?: boolean;
+};
+
+type Profile = {
+  id: string;
+  name: string;
+  fields: Fields;
+};
+
 export default function ProfileDetailsScreen() {
+  // Screen of a clicked metal profile that shows more details to add for the metal profile
   const { id, profileId } = useLocalSearchParams();
   const router = useRouter();
 
@@ -16,6 +37,8 @@ export default function ProfileDetailsScreen() {
   const [gables, setGables] = useState("");
   const [profileName, setProfileName] = useState("");
   const [amount, setAmount] = useState("");
+  const [fields, setFields] = useState<Fields>({});
+  console.log(fields);
 
   useEffect(() => {
     const fetchProfileName = async () => {
@@ -24,7 +47,9 @@ export default function ProfileDetailsScreen() {
       const profileSnap = await getDoc(profileRef);
 
       if (profileSnap.exists()) {
-        setProfileName(profileSnap.data().name);
+        const data = profileSnap.data() as Profile;
+        setProfileName(data.name);
+        setFields(data.fields);
       }
     };
 
@@ -35,20 +60,24 @@ export default function ProfileDetailsScreen() {
     const db = getFirestore(app);
 
     try {
-  
-      const profileRef = await addDoc(collection(db, `projects/${id}/metalProfiles`), {
+ 
+      const profileData: { [key: string]: any } = {
         templateId: profileId,
         name: profileName,
-        length: length,
-        depth: depth,
-        gables: gables,
-        amount: amount,
-      });
+      };
 
-      console.log(
-        `Saved new profile instance in project ${id}: Name=${profileName}, Length=${length}, Depth=${depth}, Gables=${gables}, Amount=${amount}, with new ID ${profileRef.id}`
+      if (fields.length) profileData.length = length;
+      if (fields.depth) profileData.depth = depth;
+      if (fields.gables) profileData.gables = gables;
+      if (fields.amount) profileData.amount = amount;
+
+      // Spara till Firestore
+      const profileRef = await addDoc(
+        collection(db, `projects/${id}/metalProfiles`),
+        profileData
       );
-      
+
+      console.log(`Saved new profile instance with ID ${profileRef.id}`);
       router.back();
     } catch (error) {
       console.error("Error saving profile to project: ", error);
@@ -59,34 +88,42 @@ export default function ProfileDetailsScreen() {
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Detaljer för Plåtprofil</ThemedText>
       <ThemedText>Profil: {profileName}</ThemedText>
-      <TextInput
-        value={length}
-        onChangeText={setLength}
-        placeholder="Längd"
-        keyboardType="numeric"
-        style={styles.input}
-      />
-      <TextInput
-        value={depth}
-        onChangeText={setDepth}
-        placeholder="Djup"
-        keyboardType="numeric"
-        style={styles.input}
-      />
-      <TextInput
-        value={gables}
-        onChangeText={setGables}
-        placeholder="Gavlar"
-        keyboardType="numeric"
-        style={styles.input}
-      />
-      <TextInput
-        value={amount}
-        onChangeText={setAmount}
-        placeholder="Antal"
-        keyboardType="numeric"
-        style={styles.input}
-      />
+      {fields.length && (
+        <TextInput
+          value={length}
+          onChangeText={setLength}
+          placeholder="Längd"
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      )}
+      {fields.depth && (
+        <TextInput
+          value={depth}
+          onChangeText={setDepth}
+          placeholder="Djup"
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      )}
+      {fields.gables && (
+        <TextInput
+          value={gables}
+          onChangeText={setGables}
+          placeholder="Gavlar"
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      )}
+      {fields.amount && (
+        <TextInput
+          value={amount}
+          onChangeText={setAmount}
+          placeholder="Antal"
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      )}
       <CustomButton title="Spara" size="large" onPress={handleSave} />
     </ThemedView>
   );

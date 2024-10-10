@@ -18,7 +18,7 @@ type Profile = {
   name: string;
 };
 
-export default function ProfilesScreen() {
+export default function ProfilesScreen() { // Screen that shows all the metal profiles that are used in a project
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
@@ -31,7 +31,6 @@ console.log(profiles)
       try {
         const db = getFirestore(app);
 
-        // Hämta projektets namn
         const projectDoc = doc(db, "projects", id as string);
         const projectSnapshot = await getDoc(projectDoc);
 

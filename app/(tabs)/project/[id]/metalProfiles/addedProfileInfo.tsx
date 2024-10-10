@@ -9,26 +9,21 @@ import { app } from "@/firebase/firebaseConfig";
 type Profile = {
   id: string;
   name: string;
-  length: string;
-  depth: string;
-  amount: string;
-  gables: string;
+  length?: string;
+  depth?: string;
+  gables?: string;
+  amount?: string;
 };
 
 export default function AddedProfileInfoScreen() {
   const { id, profileId } = useLocalSearchParams();
-
   const [profileData, setProfileData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  console.log(profileData)
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
       if (typeof id === "string" && typeof profileId === "string") {
-        console.log("Fetching profile for project ID:", id);
-        console.log("Fetching profile with ID:", profileId);
         const db = getFirestore(app);
-
         const profileDoc = doc(db, `projects/${id}/metalProfiles`, profileId);
         const profileSnapshot = await getDoc(profileDoc);
 
@@ -59,10 +54,18 @@ export default function AddedProfileInfoScreen() {
       {profileData ? (
         <>
           <ThemedText style={styles.title}>{profileData.name}</ThemedText>
-          <ThemedText>Längd: {profileData.length} mm</ThemedText>
-          <ThemedText>Djup: {profileData.depth} mm</ThemedText>
-          <ThemedText>Gavlar: {profileData.gables} mm</ThemedText>
-          <ThemedText>Antal: {profileData.amount} st</ThemedText>
+          {profileData.length && (
+            <ThemedText>Längd: {profileData.length} mm</ThemedText>
+          )}
+          {profileData.depth && (
+            <ThemedText>Djup: {profileData.depth} mm</ThemedText>
+          )}
+          {profileData.gables && (
+            <ThemedText>Gavlar: {profileData.gables}</ThemedText>
+          )}
+          {profileData.amount && (
+            <ThemedText>Antal: {profileData.amount}</ThemedText>
+          )}
         </>
       ) : (
         <ThemedText>Ingen profil hittades</ThemedText>
@@ -70,7 +73,6 @@ export default function AddedProfileInfoScreen() {
     </ThemedView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

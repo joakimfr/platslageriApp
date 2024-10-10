@@ -18,7 +18,7 @@ type Profile = {
   name: string;
 };
 
-export default function AllProfilesScreen() {
+export default function AllProfilesScreen() { // Screen that shows all avaiable metal profiles to add in a project
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
