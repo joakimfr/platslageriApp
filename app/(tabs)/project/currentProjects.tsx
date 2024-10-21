@@ -8,6 +8,7 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { fetchAllProjects } from "@/helpers/firebaseHelpers";
 
 type Project = {
   id: string;
@@ -19,27 +20,21 @@ export default function CurrentProjectsScreen() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchProjects = async () => {
-    setLoading(true);
-    try {
-      const db = getFirestore(app);
-      const projectsCollection = collection(db, "projects");
-      const projectSnapshot = await getDocs(projectsCollection);
-      const projectList = projectSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        name: doc.data().name,
-      }));
-      setProjects(projectList);
-    } catch (error) {
-      console.error("Error fetching projects: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
-      fetchProjects();
+      const loadProjects = async () => {
+        setLoading(true);
+        try {
+          const projectList = await fetchAllProjects();
+          setProjects(projectList);
+        } catch (error) {
+          console.error("Error fetching projects: ", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      loadProjects();
     }, [])
   );
 
