@@ -4,8 +4,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { db } from "@/firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { CustomButton } from "@/components/CustomButton";
+import { useRouter } from "expo-router";
 
 export default function CreateProjectScreen() {
+  const router = useRouter();
   const [projectName, setProjectName] = useState("");
 
   const handleCreateProject = async () => {
@@ -18,6 +20,7 @@ export default function CreateProjectScreen() {
 
       console.log("Projekt skapat med ID:", docRef.id);
       setProjectName("");
+      router.back();
     } catch (error) {
       console.error("Fel vid skapande av projekt:", error);
     }

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { Alert, View, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 import { CustomButton } from "@/components/CustomButton";
+import { DeleteButton } from "@/components/DeleteButton";
+import { deleteProject } from "@/helpers/deleteHelpers";
 
 export default function ProjectDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -34,8 +36,19 @@ export default function ProjectDetailsScreen() {
 
     fetchProject().catch(console.error);
   }, [id]);
+  
+  const handleDeleteProject = async () => {
+    console.log("Radera projekt-knappen trycktes.");
 
- 
+    try {
+      await deleteProject(id as string);
+      console.log(`Projektet med ID ${id} har raderats.`);
+      router.back();
+    } catch (error) {
+      console.error("Fel vid borttagning av projekt: ", error);
+    }
+  };
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
@@ -55,6 +68,11 @@ export default function ProjectDetailsScreen() {
         size="large"
         title="Visa plåtprofiler"
         onPress={() => router.push(`/project/${id}/metalProfiles`)}
+      />
+      <DeleteButton
+        size="large"
+        title="Ta bort projekt"
+        onPress={handleDeleteProject}
       />
     </ThemedView>
   );

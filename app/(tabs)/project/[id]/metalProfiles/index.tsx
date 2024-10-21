@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { app } from "@/firebase/firebaseConfig";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -11,54 +13,60 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import { app } from "@/firebase/firebaseConfig";
+
 
 type Profile = {
   id: string;
   name: string;
 };
 
-export default function ProfilesScreen() { // Screen that shows all the metal profiles that are used in a project
+export default function ProfilesScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [projectName, setProjectName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-console.log(profiles)
-  useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        const db = getFirestore(app);
 
-        const projectDoc = doc(db, "projects", id as string);
-        const projectSnapshot = await getDoc(projectDoc);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchProjectData = async () => {
+        try {
+          const db = getFirestore(app);
 
-        if (projectSnapshot.exists()) {
-          setProjectName(projectSnapshot.data()?.name || "Unnamed Project");
-        } else {
-          console.error("No project found with that ID.");
+          const projectDoc = doc(db, "projects", id as string);
+          const projectSnapshot = await getDoc(projectDoc);
+
+          if (projectSnapshot.exists()) {
+            setProjectName(projectSnapshot.data()?.name || "Unnamed Project");
+          } else {
+            console.error("No project found with that ID.");
+          }
+
+          const profilesCollection = collection(
+            db,
+            `projects/${id}/metalProfiles`
+          );
+          const profileSnapshot = await getDocs(profilesCollection);
+          const profilesList = profileSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Profile[];
+          setProfiles(profilesList);
+        } catch (error) {
+          console.error("Error fetching profiles or project: ", error);
+        } finally {
+          setLoading(false);
         }
+      };
 
-        const profilesCollection = collection(
-          db,
-          `projects/${id}/metalProfiles`
-        );
-        const profileSnapshot = await getDocs(profilesCollection);
-        const profilesList = profileSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Profile[];
-        setProfiles(profilesList);
-      } catch (error) {
-        console.error("Error fetching profiles or project: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      fetchProjectData();
 
-    fetchProjectData();
-  }, [id]);
+      return () => {
+        setProfiles([]);
+      };
+    }, [id])
+  );
 
   const handleAddProfile = () => {
     router.push(`/project/${id}/metalProfiles/allProfiles`);
@@ -66,7 +74,9 @@ console.log(profiles)
 
   const handleProfilePress = (profile: Profile) => {
     console.log("Selected profile:", profile);
-     router.push(`/project/${id}/metalProfiles/addedProfileInfo?profileId=${profile.id}`);
+    router.push(
+      `/project/${id}/metalProfiles/addedProfileInfo?profileId=${profile.id}`
+    );
   };
 
   if (loading) {

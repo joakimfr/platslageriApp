@@ -5,6 +5,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams } from "expo-router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
+import { CustomButton } from "@/components/CustomButton";
+import { deleteProfile } from "@/helpers/deleteHelpers";
+import { useRouter } from "expo-router";
 
 type Profile = {
   id: string;
@@ -16,9 +19,20 @@ type Profile = {
 };
 
 export default function AddedProfileInfoScreen() {
+  const router = useRouter();
   const { id, profileId } = useLocalSearchParams();
   const [profileData, setProfileData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleDeleteProfile = async () => {
+    if (typeof id === "string" && typeof profileId === "string") {
+      await deleteProfile(id, profileId);
+      console.log("Profilen har tagits bort.");
+      router.back();
+    } else {
+      console.error("Felaktigt projekt eller profil-ID.");
+    }
+  };
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -66,6 +80,11 @@ export default function AddedProfileInfoScreen() {
           {profileData.amount && (
             <ThemedText>Antal: {profileData.amount}</ThemedText>
           )}
+          <CustomButton
+            title="Ta bort"
+            size="large"
+            onPress={handleDeleteProfile}
+          />
         </>
       ) : (
         <ThemedText>Ingen profil hittades</ThemedText>
@@ -79,6 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#FF7F50",
   },
   title: {
     fontSize: 24,

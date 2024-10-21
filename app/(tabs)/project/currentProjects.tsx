@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -6,6 +6,8 @@ import { useRouter } from "expo-router";
 import { CustomButton } from "@/components/CustomButton";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 type Project = {
   id: string;
@@ -15,9 +17,11 @@ type Project = {
 export default function CurrentProjectsScreen() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
       const db = getFirestore(app);
       const projectsCollection = collection(db, "projects");
       const projectSnapshot = await getDocs(projectsCollection);
@@ -26,14 +30,20 @@ export default function CurrentProjectsScreen() {
         name: doc.data().name,
       }));
       setProjects(projectList);
-    };
+    } catch (error) {
+      console.error("Error fetching projects: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchProjects().catch(console.error);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchProjects();
+    }, [])
+  );
 
   const handleProjectPress = (project: Project) => {
-    console.log("Navigerar till projekt:", project);
-    console.log(`Sökväg: /tabs/project/${project.id}`);
     router.push(`/project/${project.id}`);
   };
 
@@ -42,21 +52,24 @@ export default function CurrentProjectsScreen() {
       <View style={styles.header}>
         <ThemedText type="title">Dina projekt</ThemedText>
       </View>
-      <FlatList
-        data={projects}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.projectItem}>
-            <ThemedText style={styles.itemText}>{item.name}</ThemedText>
-
-            <CustomButton
-              title="Visa"
-              size="small"
-              onPress={() => handleProjectPress(item)}
-            />
-          </View>
-        )}
-      />
+      {loading ? (
+        <ThemedText>Laddar projekt...</ThemedText>
+      ) : (
+        <FlatList
+          data={projects}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.projectItem}>
+              <ThemedText style={styles.itemText}>{item.name}</ThemedText>
+              <CustomButton
+                title="Visa"
+                size="small"
+                onPress={() => handleProjectPress(item)}
+              />
+            </View>
+          )}
+        />
+      )}
       <View style={styles.bottomContainer}>
         <CustomButton
           title="Skapa nytt projekt"
