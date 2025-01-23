@@ -4,8 +4,6 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
 import { CustomButton } from "@/components/CustomButton";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { app } from "@/firebase/firebaseConfig";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { fetchAllProjects } from "@/helpers/firebaseHelpers";

@@ -10,6 +10,7 @@ import { DeleteButton } from "@/components/DeleteButton";
 import { deleteProject } from "@/helpers/deleteHelpers";
 
 export default function ProjectDetailsScreen() {
+  // Screen that shows the project that user click on
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
@@ -36,7 +37,7 @@ export default function ProjectDetailsScreen() {
 
     fetchProject().catch(console.error);
   }, [id]);
-  
+
   const handleDeleteProject = async () => {
     console.log("Radera projekt-knappen trycktes.");
 
@@ -60,20 +61,22 @@ export default function ProjectDetailsScreen() {
   return (
     <ThemedView style={styles.container}>
       <View style={styles.header}>
-        <ThemedText style={styles.title}>
+        <ThemedText type="title">
           {projectName ? projectName : "Projektet har inget namn"}
         </ThemedText>
       </View>
-      <CustomButton
-        size="large"
-        title="Visa plåtprofiler"
-        onPress={() => router.push(`/project/${id}/metalProfiles`)}
-      />
-      <DeleteButton
-        size="large"
-        title="Ta bort projekt"
-        onPress={handleDeleteProject}
-      />
+      <View style={styles.buttonContainer}>
+        <CustomButton
+          size="large"
+          title="Visa plåtprofiler"
+          onPress={() => router.push(`/project/${id}/metalProfiles`)}
+        />
+        <DeleteButton
+          size="large"
+          title="Ta bort projekt"
+          onPress={handleDeleteProject}
+        />
+      </View>
     </ThemedView>
   );
 }
@@ -89,9 +92,10 @@ const styles = StyleSheet.create({
   header: {
     flex: 0.2,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  buttonContainer: {
+    flex: 0.6,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
   },
 });

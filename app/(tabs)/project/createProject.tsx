@@ -28,14 +28,22 @@ export default function CreateProjectScreen() {
 
   return (
     <View style={styles.container}>
-      <ThemedText type="title">Skapa ett nytt projekt</ThemedText>
-      <TextInput
-        value={projectName}
-        onChangeText={setProjectName}
-        placeholder="Projektnamn"
-        style={styles.input}
-      />
-      <CustomButton title="Skapa" size="large" onPress={handleCreateProject} />
+      <View style={styles.header}>
+        <ThemedText type="title">Skapa nytt projekt</ThemedText>
+      </View>
+      <View style={styles.content}>
+        <TextInput
+          value={projectName}
+          onChangeText={setProjectName}
+          placeholder="Projektnamn"
+          style={styles.input}
+        />
+        <CustomButton
+          title="Skapa"
+          size="large"
+          onPress={handleCreateProject}
+        />
+      </View>
     </View>
   );
 }
@@ -47,7 +55,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FF7F50",
   },
-
+  header: {
+    flex: 0.2,
+  },
+  content: {
+    flex: 0.6,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
   input: {
     height: 40,
     borderColor: "gray",
