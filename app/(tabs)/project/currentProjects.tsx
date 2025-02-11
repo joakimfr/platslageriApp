@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, FlatList, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { CustomButton } from "@/components/CustomButton";
 import { useCallback } from "react";
 import { fetchAllProjects } from "@/helpers/firebaseHelpers";
@@ -15,15 +15,13 @@ import { deleteProject } from "@/helpers/deleteHelpers";
 type Project = {
   id: string;
   name: string;
-  // description: string; // Lagt till beskrivning
-  // status: string; // Lagt till status
 };
 
 export default function CurrentProjectsScreen() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation(); // Hämta navigation-objektet
+  const navigation = useNavigation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -80,7 +78,7 @@ export default function CurrentProjectsScreen() {
                 <ThemedText style={styles.projectDescription}>
                   description
                 </ThemedText>
-                <ThemedText>Skapat: 23 feb 2024</ThemedText>
+                <Text style={styles.projectDate}>Skapat: 23 feb 2024</Text>
               </View>
               <View style={styles.buttonContainer}>
                 <CustomButton
@@ -159,7 +157,11 @@ const styles = StyleSheet.create({
   },
   projectDescription: {
     fontSize: 14,
-    color: "#666",
+    color: "#4B5563",
+  },
+  projectDate: {
+    fontSize: 12,
+    color: "#6B7280",
   },
   bottomContainer: {
     alignItems: "center",

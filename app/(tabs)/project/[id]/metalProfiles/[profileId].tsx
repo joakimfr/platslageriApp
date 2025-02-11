@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, TextInput, Button, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import {
   getFirestore,
   doc,
@@ -31,6 +31,7 @@ export default function ProfileDetailsScreen() {
   // Screen of a clicked metal profile that shows more details to add for the metal profile
   const { id, profileId } = useLocalSearchParams();
   const router = useRouter();
+  const navigation = useNavigation();
 
   const [length, setLength] = useState("");
   const [depth, setDepth] = useState("");
@@ -39,6 +40,13 @@ export default function ProfileDetailsScreen() {
   const [amount, setAmount] = useState("");
   const [fields, setFields] = useState<Fields>({});
   console.log(fields);
+
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerTitle: "Detaljer för plåtprofil",
+        headerTitleAlign: "center",
+      });
+    }, [navigation]);
 
   useEffect(() => {
     const fetchProfileName = async () => {
@@ -86,7 +94,6 @@ export default function ProfileDetailsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>Detaljer för Plåtprofil</ThemedText>
       <ThemedText>Profil: {profileName}</ThemedText>
       {fields.length && (
         <TextInput
@@ -132,7 +139,6 @@ export default function ProfileDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#FF7F50",

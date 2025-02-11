@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2C3E50",
     padding: 10,
     width: 195,
-    height: 40,
   },
   buttonSmall: {
     backgroundColor: "#2C3E50",
