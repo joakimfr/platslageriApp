@@ -3,15 +3,22 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { CustomButton } from "@/components/CustomButton";
+import { useLayoutEffect } from "react";
+import { useNavigation } from "expo-router";
 
 export default function ProjectScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Projekt",
+      headerTitleAlign: "center",
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText type="title">Projekt</ThemedText>
-      </View>
       <View style={styles.buttonContainer}>
         <CustomButton
           size="large"

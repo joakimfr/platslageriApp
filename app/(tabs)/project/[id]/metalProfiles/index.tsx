@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { app } from "@/firebase/firebaseConfig";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { View, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";

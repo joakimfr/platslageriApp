@@ -5,7 +5,7 @@ export default function ProjectLayout() {
     <Stack
       screenOptions={{
         headerTitle: "",
-        headerBackTitleVisible: false,
+        headerTitleAlign: "center", // Centrerar titeln
         headerShadowVisible: false,
 
         headerStyle: {

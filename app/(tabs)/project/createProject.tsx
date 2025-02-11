@@ -5,10 +5,20 @@ import { db } from "@/firebase/firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
 import { CustomButton } from "@/components/CustomButton";
 import { useRouter } from "expo-router";
+import { useLayoutEffect } from "react";
+import { useNavigation } from "expo-router";
 
 export default function CreateProjectScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const [projectName, setProjectName] = useState("");
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Skapa nytt projekt",
+      headerTitleAlign: "center",
+    });
+  }, [navigation]);
 
   const handleCreateProject = async () => {
     try {
@@ -28,9 +38,6 @@ export default function CreateProjectScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <ThemedText type="title">Skapa nytt projekt</ThemedText>
-      </View>
       <View style={styles.content}>
         <TextInput
           value={projectName}

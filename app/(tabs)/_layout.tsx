@@ -9,11 +9,16 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
-      }}
-    >
+    screenOptions={{
+      tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+      tabBarInactiveTintColor: "#888",
+      tabBarStyle: {
+        backgroundColor: "#2C3E50",
+        borderTopWidth: 0,
+      },
+      headerShown: false,
+    }}
+  >
       <Tabs.Screen
         name="index"
         options={{
@@ -26,7 +31,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
@@ -37,7 +42,7 @@ export default function TabLayout() {
             />
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="project" // Project-fliken
         options={{
