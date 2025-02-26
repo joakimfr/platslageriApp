@@ -50,3 +50,19 @@ export const fetchProfilesForProject = async (projectId: string) => {
     throw error;
   }
 };
+
+//Add a function to fetch all metal profiles
+export const fetchAllMetalProfiles = async () => {
+  try {
+    const profilesCollection = collection(db, "metalProfiles");
+    const profileSnapshot = await getDocs(profilesCollection);
+    const profilesList = profileSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return profilesList;
+  } catch (error) {
+    console.error("Error fetching profiles:", error);
+    throw error;
+  }
+}

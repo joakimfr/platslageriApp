@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  Button,
+  Text,
   FlatList,
   StyleSheet,
   TouchableOpacity,
@@ -12,18 +12,30 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { db } from "@/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import { CustomButton } from "@/components/CustomButton";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 type Profile = {
   id: string;
   name: string;
+  hasSubcategories?: boolean;
 };
 
-export default function AllProfilesScreen() { // Screen that shows all avaiable metal profiles to add in a project
+type Subcategory = {
+  id: string;
+  name: string;
+};
+
+export default function AllProfilesScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [newProfileName, setNewProfileName] = useState("");
+  const [subcategories, setSubcategories] = useState<{
+    [key: string]: Subcategory[];
+  }>({});
+  const [expandedProfiles, setExpandedProfiles] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -32,6 +44,7 @@ export default function AllProfilesScreen() { // Screen that shows all avaiable 
       const profilesList = profilesSnapshot.docs.map((doc) => ({
         id: doc.id,
         name: doc.data().name,
+        hasSubcategories: doc.data().hasSubcategories || false,
       }));
       setProfiles(profilesList);
     };
@@ -39,14 +52,38 @@ export default function AllProfilesScreen() { // Screen that shows all avaiable 
     fetchProfiles();
   }, []);
 
-  const handleProfilePress = (profile: Profile) => {
-    console.log("Navigerar till projekt:", profile);
-    console.log(`/project/${id}/metalProfiles/${profile.id}`);
-    router.push(`/project/${id}/metalProfiles/${profile.id}`);
+  const fetchSubcategories = async (profileId: string) => {
+    const subcategoriesCollection = collection(
+      db,
+      `metalProfiles/${profileId}/subcategories`
+    );
+    const subcategoriesSnapshot = await getDocs(subcategoriesCollection);
+    const subcategoriesList = subcategoriesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      name: doc.data().name,
+    }));
+
+    setSubcategories((prev) => ({ ...prev, [profileId]: subcategoriesList }));
   };
 
-  const handleCreateCustomProfile = () => {
-    router.push(`/project/${id}/metalProfiles/createCustomProfile`);
+  const toggleDropdown = async (profile: Profile) => {
+    if (!profile.hasSubcategories) {
+      router.push(`/project/${id}/metalProfiles/${profile.id}`);
+      return;
+    }
+
+    setExpandedProfiles((prev) => ({
+      ...prev,
+      [profile.id]: !prev[profile.id],
+    }));
+
+    if (!subcategories[profile.id]) {
+      await fetchSubcategories(profile.id);
+    }
+  };
+
+  const handleSubcategoryPress = (subcategoryId: string) => {
+    router.push(`/project/${id}/metalProfiles/${subcategoryId}`);
   };
 
   return (
@@ -57,12 +94,41 @@ export default function AllProfilesScreen() { // Screen that shows all avaiable 
         data={profiles}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => handleProfilePress(item)}
-            style={styles.profileItem}
-          >
-            <ThemedText>{item.name}</ThemedText>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              onPress={() => toggleDropdown(item)}
+              style={styles.profileItem}
+            >
+              <Text>{item.name}</Text>
+              {item.hasSubcategories ? (
+                <Ionicons
+                  name={
+                    expandedProfiles[item.id] ? "chevron-up" : "chevron-down"
+                  }
+                  size={20}
+                  color="black"
+                />
+              ) : (
+                <Ionicons name="add" size={24} color="black" />
+              )}
+            </TouchableOpacity>
+
+            {expandedProfiles[item.id] && subcategories[item.id] && (
+              <FlatList
+                data={subcategories[item.id]}
+                keyExtractor={(sub) => sub.id}
+                renderItem={({ item: sub }) => (
+                  <TouchableOpacity
+                  onPress={() => handleSubcategoryPress(sub.id)}
+                  style={styles.subcategoryItem}
+                >
+                    <Text>{sub.name}</Text>
+                    <Ionicons name="add" size={24} color="black" />
+                  </TouchableOpacity>
+                )}
+              />
+            )}
+          </View>
         )}
         style={styles.profileList}
       />
@@ -70,7 +136,9 @@ export default function AllProfilesScreen() { // Screen that shows all avaiable 
       <CustomButton
         title="Skapa egen plåtprofil"
         size="large"
-        onPress={handleCreateCustomProfile}
+        onPress={() =>
+          router.push(`/project/${id}/metalProfiles/createCustomProfile`)
+        }
       />
     </ThemedView>
   );
@@ -102,8 +170,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profileItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    padding: 16,
+    backgroundColor: "#EEE",
+    marginBottom: 8,
+    borderRadius: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  subcategoryItem: {
+    padding: 12,
+    backgroundColor: "#DDD",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginLeft: 20,
+    marginBottom: 4,
+    borderRadius: 8,
   },
 });

@@ -1,14 +1,18 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
-import { Stack } from "expo-router";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { app } from "@/firebase/firebaseConfig";
 import { CustomButton } from "@/components/CustomButton";
 import { DeleteButton } from "@/components/DeleteButton";
 import { deleteProject } from "@/helpers/deleteHelpers";
+
+type Profile = {
+  id: string;
+  name: string;
+};
 
 export default function ProjectDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -16,24 +20,41 @@ export default function ProjectDetailsScreen() {
   const navigation = useNavigation();
 
   const [projectName, setProjectName] = useState<string | null>(null);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchProjectAndProfiles = async () => {
       const db = getFirestore(app);
-      const projectRef = doc(db, "projects", id as string);
-      const projectSnap = await getDoc(projectRef);
 
-      if (projectSnap.exists()) {
-        setProjectName(projectSnap.data().name);
-      } else {
-        setProjectName("Okänt projekt");
+      try {
+        // Hämta projektinfo
+        const projectRef = doc(db, "projects", id as string);
+        const projectSnap = await getDoc(projectRef);
+
+        if (projectSnap.exists()) {
+          setProjectName(projectSnap.data().name);
+        } else {
+          setProjectName("Okänt projekt");
+        }
+
+        // Hämta profiler
+        const profilesCollection = collection(db, `projects/${id}/metalProfiles`);
+        const profileSnapshot = await getDocs(profilesCollection);
+        const profilesList = profileSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Profile[];
+
+        setProfiles(profilesList);
+      } catch (error) {
+        console.error("Fel vid hämtning av projekt eller profiler: ", error);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
-    fetchProject().catch(console.error);
+    fetchProjectAndProfiles();
   }, [id]);
 
   useLayoutEffect(() => {
@@ -52,20 +73,37 @@ export default function ProjectDetailsScreen() {
     }
   };
 
+  const handleProfilePress = (profile: Profile) => {
+    router.push(`/project/${id}/metalProfiles/addedProfileInfo?profileId=${profile.id}`);
+  };
+
+  const handleAddProfile = () => {
+    router.push(`/project/${id}/metalProfiles/allProfiles`);
+  };
+
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.buttonContainer}>
-        <CustomButton
-          size="large"
-          title="Visa plåtprofiler"
-          onPress={() => router.push(`/project/${id}/metalProfiles`)}
-        />
-        <DeleteButton
-          size="large"
-          title="Ta bort projekt"
-          onPress={handleDeleteProject}
-        />
-      </View>
+      <ThemedText style={styles.title}>Projekt: {projectName}</ThemedText>
+
+      {loading ? (
+        <ThemedText>Laddar...</ThemedText>
+      ) : (
+        <>
+          <FlatList
+            data={profiles}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleProfilePress(item)} style={styles.profileItem}>
+                <ThemedText>{item.name}</ThemedText>
+              </TouchableOpacity>
+            )}
+          />
+
+          <CustomButton title="Lägg till fler" size="large" onPress={handleAddProfile} />
+        </>
+      )}
+
+      <DeleteButton size="large" title="Ta bort projekt" onPress={handleDeleteProject} />
     </ThemedView>
   );
 }
@@ -73,18 +111,19 @@ export default function ProjectDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
     backgroundColor: "#FF7F50",
   },
-  header: {
-    flex: 0.2,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
-  buttonContainer: {
-    flex: 0.6,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 16,
+  profileItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });

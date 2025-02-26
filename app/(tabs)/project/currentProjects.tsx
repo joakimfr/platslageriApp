@@ -1,10 +1,16 @@
-import React, { useState } from "react";
-import { View, FlatList, StyleSheet, TouchableOpacity, Text } from "react-native";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  FlatList,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { CustomButton } from "@/components/CustomButton";
-import { useCallback } from "react";
 import { fetchAllProjects } from "@/helpers/firebaseHelpers";
 import { useFocusEffect } from "expo-router";
 import { useLayoutEffect } from "react";
@@ -21,12 +27,13 @@ export default function CurrentProjectsScreen() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Dina projekt",
-      headerTitleAlign: "center", // Centrerar titeln
+      headerTitleAlign: "center",
     });
   }, [navigation]);
 
@@ -48,6 +55,10 @@ export default function CurrentProjectsScreen() {
     }, [])
   );
 
+  const filteredProjects = projects.filter((project) =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleProjectPress = (project: Project) => {
     router.push(`/project/projectDetails/${project.id}`);
   };
@@ -65,11 +76,27 @@ export default function CurrentProjectsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {/* New searchbar */}
+      <View style={styles.searchContainer}>
+        <Ionicons
+          name="search"
+          size={20}
+          color="#aaa"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Sök projekt..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
       {loading ? (
         <ThemedText>Laddar projekt...</ThemedText>
       ) : (
         <FlatList
-          data={projects}
+          data={filteredProjects}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.projectCard}>
@@ -116,10 +143,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF7F50",
     padding: 16,
   },
-  header: {
-    marginBottom: 20,
-    justifyContent: "center",
+  searchContainer: {
+    flexDirection: "row",
     alignItems: "center",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    height: 40,
+    flex: 1, 
+    color: "#CCCCCC",
+    borderWidth: 0,
   },
   projectCard: {
     flexDirection: "column",
@@ -147,9 +188,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  trashButton: {
-
-  },
+  trashButton: {},
   projectName: {
     fontWeight: "bold",
     fontSize: 16,

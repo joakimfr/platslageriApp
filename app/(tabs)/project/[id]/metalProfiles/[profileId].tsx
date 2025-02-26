@@ -79,7 +79,6 @@ export default function ProfileDetailsScreen() {
       if (fields.gables) profileData.gables = gables;
       if (fields.amount) profileData.amount = amount;
 
-      // Spara till Firestore
       const profileRef = await addDoc(
         collection(db, `projects/${id}/metalProfiles`),
         profileData
