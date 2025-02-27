@@ -51,8 +51,9 @@ const styles = StyleSheet.create({
   },
   buttonLarge: {
     backgroundColor: "#2C3E50",
+    height: 50,
     padding: 10,
-    width: 195,
+    width: "100%",
   },
   buttonSmall: {
     backgroundColor: "#2C3E50",
